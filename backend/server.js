@@ -8,39 +8,41 @@ require('dotenv').config();
 
 const app = express();
 
-// 1. DATABASE CONNECTION
+// 1. DATABASE CONNECTION (Neon / PostgreSQL)
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
 });
 
-// 2. MIDDLEWARE (The Security Glue)
+// 2. MIDDLEWARE & SECURITY GLUE
 app.use(express.json());
 
-// CORS must point to your Vercel URL
+// CORS: Critical for Vercel -> Render communication
 app.use(cors({
     origin: 'https://bit-stream-web.vercel.app',
     credentials: true 
 }));
 
-// Required for Render's proxy to handle secure cookies
+// Required for Render to handle secure cookies correctly
 app.set("trust proxy", 1); 
 
+// SESSION CONFIG: The "Handshake" between Vercel and Render
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'bitstream_secret',
-    resave: false,
-    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET || 'bitstream_secret_key',
+    resave: true,               // Forces session to be saved back to the store
+    saveUninitialized: true,    // Forces a session to be created even if not logged in
+    proxy: true,                // Tells session to trust the Render/Vercel proxy
     cookie: {
-        secure: true,      // Must be true for HTTPS
-        sameSite: 'none',  // Allows Vercel to read Render's cookie
-        maxAge: 24 * 60 * 60 * 1000 
+        secure: true,           // Required for HTTPS (Production)
+        sameSite: 'none',       // Required for cross-domain cookies
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 3. PASSPORT CONFIG
+// 3. PASSPORT CONFIG (Google OAuth)
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -74,7 +76,7 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-// 4. AUTH ROUTES
+// 4. AUTHENTICATION ROUTES
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', 
@@ -83,6 +85,7 @@ app.get('/auth/google/callback',
 );
 
 app.get('/api/current_user', (req, res) => {
+    // This is what the Navbar calls to see if you are logged in
     res.json(req.user || null);
 });
 
@@ -90,13 +93,14 @@ app.get('/auth/logout', (req, res, next) => {
     req.logout((err) => {
         if (err) return next(err);
         req.session.destroy(() => {
-            res.clearCookie('connect.sid'); // Clears the session cookie
+            res.clearCookie('connect.sid'); 
             res.redirect('https://bit-stream-web.vercel.app');
         });
     });
 });
 
-// 5. VIDEO ROUTES
+// 5. VIDEO MANAGEMENT ROUTES
+// Get all videos
 app.get('/api/videos', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM Videos ORDER BY created_at DESC');
@@ -106,6 +110,18 @@ app.get('/api/videos', async (req, res) => {
     }
 });
 
+// Get a single video (for the Player page)
+app.get('/api/videos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query('SELECT * FROM Videos WHERE video_id = $1', [id]);
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// Upload a new video
 app.post('/api/videos', async (req, res) => {
     const { title, description, url, duration, mood } = req.body;
     try {
@@ -119,15 +135,28 @@ app.post('/api/videos', async (req, res) => {
     }
 });
 
-app.delete('/api/videos/:id', async (req, res) => {
+// Update View Count
+app.patch('/api/videos/:id/view', async (req, res) => {
     try {
         const { id } = req.params;
-        await pool.query('DELETE FROM Videos WHERE video_id = $1', [id]);
-        res.json({ message: "Deleted" });
+        await pool.query('UPDATE Videos SET view_count = COALESCE(view_count, 0) + 1 WHERE video_id = $1', [id]);
+        res.sendStatus(200);
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
 
+// Delete a video
+app.delete('/api/videos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query('DELETE FROM Videos WHERE video_id = $1', [id]);
+        res.json({ message: "Video deleted successfully" });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// 6. START SERVER
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 BITStream Engine running on port ${PORT}`));
