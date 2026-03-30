@@ -1,41 +1,46 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Navbar = () => {
-  const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    axios.get('https://bitstream-web.onrender.com/api/current_user')
-      .then(res => setUser(res.data))
-      .catch(() => setUser(null));
-  }, []);
+    // --- ADD YOUR TEAM EMAILS HERE ---
+    const adminEmails = [
+        'f20240200@goa.bits-pilani.ac.in', 
+        'f20240207@goa.bits-pilani.ac.in', 
+        'f20240222@goa.bits-pilani.ac.in',
+        'f20240225@goa.bits-pilani.ac.in',
+        'f20240007@goa.bits-pilani.ac.in',
+        'f20240598@goa.bits-pilani.ac.in'
+    ];
 
-  return (
-    <nav className="w-full py-4 px-8 bg-gray-800 border-b border-gray-700 flex justify-between items-center sticky top-0 z-50">
-      <Link to="/" className="text-2xl font-bold text-blue-500 hover:text-blue-400 transition">BITStream</Link>
-      
-      <div className="flex items-center space-x-6">
-        <Link to="/" className="hover:text-blue-400 transition text-gray-300 font-medium">Home</Link>
-        
-        {user ? (
-          <div className="flex items-center space-x-4">
-            <Link to="/upload" className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-xs font-bold transition border border-gray-600">
-              + Upload
-            </Link>
-            <div className="flex items-center space-x-2">
-               <span className="text-xs text-gray-400">{user.name}</span>
-               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center font-bold text-sm">{user.name.charAt(0)}</div>
+    useEffect(() => {
+        // Fetches the user from your Render backend
+        axios.get('https://bitstream-web.onrender.com/api/current_user')
+            .then(res => setUser(res.data))
+            .catch(err => console.log(err));
+    }, []);
+
+    return (
+        <nav className="navbar">
+            <Link to="/"><h1>BITStream</h1></Link>
+            <div className="nav-links">
+                <Link to="/">Home</Link>
+                
+                {/* --- SHOW UPLOAD ONLY FOR ADMINS --- */}
+                {user && adminEmails.includes(user.email) && (
+                    <Link to="/upload" className="upload-btn">Upload</Link>
+                )}
+
+                {user ? (
+                    <span className="user-name">{user.name}</span>
+                ) : (
+                    <a href="https://bitstream-web.onrender.com/auth/google" className="login-btn">Login</a>
+                )}
             </div>
-          </div>
-        ) : (
-          <a href="https://bitstream-web.onrender.com/auth/google" className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-bold transition shadow-lg text-white">
-            Login
-          </a>
-        )}
-      </div>
-    </nav>
-  )
-}
+        </nav>
+    );
+};
 
-export default Navbar
+export default Navbar;
