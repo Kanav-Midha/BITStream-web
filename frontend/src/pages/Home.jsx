@@ -8,7 +8,25 @@ const Home = () => {
   const [videos, setVideos] = useState([])
   const [filteredVideos, setFilteredVideos] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
+  
+  // 1. New state for the visitor's name
+  const [visitorName, setVisitorName] = useState('Guest')
 
+  // 2. Personalization logic (Name Prompt & LocalStorage)
+  useEffect(() => {
+    const savedName = localStorage.getItem('siteVisitorName')
+    if (savedName) {
+      setVisitorName(savedName)
+    } else {
+      const nameInput = window.prompt("Welcome to BITStream! What's your name?")
+      if (nameInput && nameInput.trim() !== '') {
+        localStorage.setItem('siteVisitorName', nameInput.trim())
+        setVisitorName(nameInput.trim())
+      }
+    }
+  }, [])
+
+  // Existing Video Fetching logic
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -31,7 +49,6 @@ const Home = () => {
     }
   }
 
-  // Combine Mood Filter with Search Filter
   const displayVideos = filteredVideos.filter(video => 
     video.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -44,10 +61,12 @@ const Home = () => {
           <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-4">
             BITStream
           </h1>
-          <p className="text-gray-400 text-lg">Your vibe, your stream.</p>
+          {/* 3. Personalized Greeting */}
+          <p className="text-gray-400 text-lg">
+            How are you feeling, <span className="text-blue-400 font-semibold">{visitorName}</span>?
+          </p>
         </section>
 
-        {/* Search Bar */}
         <div className="max-w-md mx-auto mb-10">
           <input 
             type="text"
