@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+// Required to send cookies back and forth
+axios.defaults.withCredentials = true;
+
 const Navbar = () => {
     const [user, setUser] = useState(null);
 
-    // --- 1. ENSURE THESE EMAILS ARE EXACTLY AS THEY APPEAR IN GMAIL ---
     const adminEmails = [
         'f20240200@goa.bits-pilani.ac.in', 
         'f20240207@goa.bits-pilani.ac.in', 
@@ -16,41 +18,69 @@ const Navbar = () => {
     ];
 
     useEffect(() => {
-        // Fetches the user from your Render backend
         axios.get('https://bitstream-web.onrender.com/api/current_user')
-            .then(res => {
-                console.log("Logged in user data:", res.data); // DEBUG: Check this in browser console
-                setUser(res.data);
-            })
-            .catch(err => console.log("Login check error:", err));
+            .then(res => setUser(res.data))
+            .catch(err => console.log("Auth error:", err));
     }, []);
 
-    return (
-        <nav className="navbar">
-            <div className="nav-container">
-                <Link to="/" className="nav-logo">
-                    <h1>BITStream</h1>
-                </Link>
-                
-                <div className="nav-links">
-                    <Link to="/">Home</Link>
-                    
-                    {/* --- 2. SHOW UPLOAD ONLY IF EMAIL MATCHES LIST --- */}
-                    {user && user.email && adminEmails.includes(user.email.toLowerCase()) && (
-                        <Link to="/upload" className="upload-btn">Upload</Link>
-                    )}
+    // Inline styles for a guaranteed layout
+    const navStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '1rem 2rem',
+        background: '#0a0f1c',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100
+    };
 
-                    {user ? (
-                        <div className="user-profile">
-                            <span className="user-name">{user.name}</span>
-                            {/* Optional: add a logout link here later */}
-                        </div>
-                    ) : (
-                        <a href="https://bitstream-web.onrender.com/auth/google" className="login-btn">
-                            Login
+    const linkGroupStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '2rem'
+    };
+
+    const buttonStyle = {
+        padding: '0.5rem 1rem',
+        borderRadius: '8px',
+        textDecoration: 'none',
+        fontWeight: '600',
+        transition: '0.2s'
+    };
+
+    return (
+        <nav style={navStyle}>
+            <Link to="/" style={{ textDecoration: 'none' }}>
+                <h1 style={{ margin: 0, color: '#a78bfa', fontSize: '1.5rem', fontWeight: '800' }}>BITStream</h1>
+            </Link>
+            
+            <div style={linkGroupStyle}>
+                <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
+                
+                {/* ADMIN CHECK */}
+                {user && user.email && adminEmails.includes(user.email.toLowerCase()) && (
+                    <Link to="/upload" style={{ ...buttonStyle, background: '#3b82f6', color: 'white' }}>
+                        Upload
+                    </Link>
+                )}
+
+                {/* USER AUTH SECTION */}
+                {user ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                        <span style={{ color: '#9ca3af' }}>{user.name}</span>
+                        <a href="https://bitstream-web.onrender.com/auth/logout" 
+                           style={{ ...buttonStyle, border: '1px solid #ef4444', color: '#ef4444' }}>
+                            Logout
                         </a>
-                    )}
-                </div>
+                    </div>
+                ) : (
+                    <a href="https://bitstream-web.onrender.com/auth/google" 
+                       style={{ ...buttonStyle, background: 'white', color: 'black' }}>
+                        Login
+                    </a>
+                )}
             </div>
         </nav>
     );
