@@ -12,10 +12,10 @@ const Player = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/api/videos/${id}`)
+        const response = await axios.get(`https://bitstream-web.onrender.com/api/videos/${id}`)
         setVideo(response.data)
         setLoading(false)
-        await axios.patch(`http://localhost:5001/api/videos/${id}/view`)
+        await axios.patch(`https://bitstream-web.onrender.com/api/videos/${id}/view`)
       } catch (error) {
         setLoading(false)
       }
@@ -26,7 +26,7 @@ const Player = () => {
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this video?")) {
       try {
-        await axios.delete(`http://localhost:5001/api/videos/${id}`);
+        await axios.delete(`https://bitstream-web.onrender.com/api/videos/${id}`);
         navigate('/'); // Go home after deleting
       } catch (err) {
         alert("Error deleting video");

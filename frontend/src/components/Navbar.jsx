@@ -6,7 +6,7 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5001/api/current_user')
+    axios.get('https://bitstream-web.onrender.com/api/current_user')
       .then(res => setUser(res.data))
       .catch(() => setUser(null));
   }, []);
@@ -29,7 +29,7 @@ const Navbar = () => {
             </div>
           </div>
         ) : (
-          <a href="http://localhost:5001/auth/google" className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-bold transition shadow-lg text-white">
+          <a href="https://bitstream-web.onrender.com/auth/google" className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-bold transition shadow-lg text-white">
             Login
           </a>
         )}

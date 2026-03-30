@@ -10,7 +10,7 @@ const Upload = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5001/api/videos', formData);
+      await axios.post('https://bitstream-web.onrender.com/api/videos', formData);
       alert("Video Uploaded Successfully!");
       navigate('/'); // Go back to Home to see the new video
     } catch (err) {

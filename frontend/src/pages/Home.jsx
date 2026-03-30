@@ -12,7 +12,7 @@ const Home = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/videos')
+        const response = await axios.get('https://bitstream-web.onrender.com/api/videos')
         setVideos(response.data)
         setFilteredVideos(response.data)
       } catch (error) {
