@@ -1,98 +1,65 @@
-/* GLOBAL UPGRADES */
-.app-container {
-  min-height: 100vh;
-  /* Premium radial gradient background */
-  background: radial-gradient(circle at top right, #1e1b4b, #0a0f1c, #000000);
-  font-family: 'Inter', system-ui, sans-serif;
+/* VIDEO CARD INTERNALS */
+.thumbnail-container {
+  background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.play-icon {
+  font-size: 3rem;
+  color: white;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.video-card:hover .play-icon {
+  opacity: 1;
+}
+
+.duration {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.video-info {
+  padding: 1.2rem;
+}
+
+.video-info h3 {
+  margin: 0 0 0.8rem 0;
+  font-size: 1.2rem;
   color: #f3f4f6;
 }
 
-/* NAVBAR: Glassmorphism effect */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(10, 15, 28, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.video-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
 }
 
-.nav-logo h1 {
-  font-size: 1.8rem;
-  font-weight: 800;
-  background: linear-gradient(to right, #a78bfa, #3b82f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 0;
+.mood-tag {
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
+/* Fix Navbar Spacing */
 .nav-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem; /* Adds space between Home and Login */
   align-items: center;
-  font-weight: 500;
-}
-
-/* PREMIUM VIDEO CARDS */
-.video-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.video-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.video-card:hover {
-  transform: translateY(-8px);
-  /* Glowing purple drop shadow */
-  box-shadow: 0 12px 30px -10px rgba(139, 92, 246, 0.5);
-  border-color: rgba(139, 92, 246, 0.3);
-}
-
-/* BUTTONS */
-.upload-btn {
-  background: #3b82f6;
-  color: white;
-  padding: 0.5rem 1.2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-
-.upload-btn:hover {
-  background: #2563eb;
-}
-
-.delete-btn {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid #ef4444;
-  padding: 0.3rem 0.8rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.delete-btn:hover {
-  background: #ef4444;
-  color: white;
 }
