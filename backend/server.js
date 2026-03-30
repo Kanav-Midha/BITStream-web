@@ -90,5 +90,17 @@ app.post('/api/videos', async (req, res) => {
     res.json(result.rows[0]);
 });
 
+// --- NEW DELETE ROUTE ---
+app.delete('/api/videos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query('DELETE FROM Videos WHERE video_id = $1', [id]);
+        res.json({ message: "Video deleted successfully" });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`🚀 Server running`));
