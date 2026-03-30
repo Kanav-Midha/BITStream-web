@@ -7,7 +7,7 @@ const Navbar = () => {
 
     // --- 1. ENSURE THESE EMAILS ARE EXACTLY AS THEY APPEAR IN GMAIL ---
     const adminEmails = [
-       'f20240200@goa.bits-pilani.ac.in', 
+        'f20240200@goa.bits-pilani.ac.in', 
         'f20240207@goa.bits-pilani.ac.in', 
         'f20240222@goa.bits-pilani.ac.in',
         'f20240225@goa.bits-pilani.ac.in',
