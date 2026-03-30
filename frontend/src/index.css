@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Your global background styles should be here */
+body {
+  margin: 0;
+  background-color: #0f172a; /* This is the dark color your site had before */
+  color: white;
+}
